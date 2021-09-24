@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 // LepGold is the coolest bar in town. You come in with some Sushi, and leave with more! The longer you stay, the more Sushi you get.
 //
 // This contract handles swapping to and from xSushi, SushiSwap's staking token.
-contract LepGold is ERC20("LepGold", "LEPg"){
+contract LepGold is ERC20("GOLD Treasure", "xGOLD"){
     using SafeMath for uint256;
     IERC20 public lep;
 

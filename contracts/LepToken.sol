@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 // LepToken with Governance.
-contract LepToken is ERC20("LepToken", "LEP"), Ownable {
+contract LepToken is ERC20("LEPgold Reward", "GOLD"), Ownable {
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterLep).
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
