@@ -1,14 +1,14 @@
 pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
-import "../../contracts/MasterChefV2.sol";
+import "../../contracts/MasterLepV2.sol";
 
-contract MasterChefV2Harness is MasterChefV2 {
+contract MasterLepV2Harness is MasterLepV2 {
     ////////////////////////////////////////////////////////////////////////////
     //                         Constructors and inits                         //
     ////////////////////////////////////////////////////////////////////////////
-    constructor(IMasterChef _MASTER_CHEF, IERC20 _sushi, uint256 _MASTER_PID)
-                    MasterChefV2(_MASTER_CHEF, _sushi, _MASTER_PID) public { }
+    constructor(IMasterLep _MASTER_CHEF, IERC20 _sushi, uint256 _MASTER_PID)
+                    MasterLepV2(_MASTER_CHEF, _sushi, _MASTER_PID) public { }
 
     ////////////////////////////////////////////////////////////////////////////
     //                        Getters for The Internals                       //

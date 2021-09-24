@@ -8,7 +8,7 @@ import "@boringcrypto/boring-solidity/contracts/BoringBatchable.sol";
 import "@boringcrypto/boring-solidity/contracts/BoringOwnable.sol";
 import "./libraries/SignedSafeMath.sol";
 import "./interfaces/IRewarder.sol";
-import "./interfaces/IMasterChef.sol";
+import "./interfaces/IMasterLep.sol";
 
 interface IMigratorChef {
     // Take the current LP token address and return the new LP token address.
@@ -16,10 +16,10 @@ interface IMigratorChef {
     function migrate(IERC20 token) external returns (IERC20);
 }
 
-/// @notice The (older) MasterChef contract gives out a constant number of SUSHI tokens per block.
+/// @notice The (older) MasterLep contract gives out a constant number of SUSHI tokens per block.
 /// It is the only address with minting rights for SUSHI.
-/// The idea for this MasterChef V2 (MCV2) contract is therefore to be the owner of a dummy token
-/// that is deposited into the MasterChef V1 (MCV1) contract.
+/// The idea for this MasterLep V2 (MCV2) contract is therefore to be the owner of a dummy token
+/// that is deposited into the MasterLep V1 (MCV1) contract.
 /// The allocation point for this pool on MCV1 is the total allocation point for all pools that receive double incentives.
 contract MiniChefV2 is BoringOwnable, BoringBatchable {
     using BoringMath for uint256;
@@ -129,12 +129,12 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @notice Migrate LP token to another LP contract through the `migrator` contract.
     /// @param _pid The index of the pool. See `poolInfo`.
     function migrate(uint256 _pid) public {
-        require(address(migrator) != address(0), "MasterChefV2: no migrator set");
+        require(address(migrator) != address(0), "MasterLepV2: no migrator set");
         IERC20 _lpToken = lpToken[_pid];
         uint256 bal = _lpToken.balanceOf(address(this));
         _lpToken.approve(address(migrator), bal);
         IERC20 newLpToken = migrator.migrate(_lpToken);
-        require(bal == newLpToken.balanceOf(address(this)), "MasterChefV2: migrated balance must match");
+        require(bal == newLpToken.balanceOf(address(this)), "MasterLepV2: migrated balance must match");
         lpToken[_pid] = newLpToken;
     }
 

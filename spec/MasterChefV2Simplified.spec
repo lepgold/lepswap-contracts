@@ -1,14 +1,14 @@
 /*
- * This is a specification file for MasterChefV2's formal verification
+ * This is a specification file for MasterLepV2's formal verification
  * using the Certora prover.
  *
- * Run this file with scripts/_runMasterChefV2Simplified.sh
+ * Run this file with scripts/_runMasterLepV2Simplified.sh
  */
 
 // Declaration of contracts used in the sepc 
 using DummyERC20A as tokenA
 using DummyERC20B as tokenB
-using DummySUSHI as sushiToken
+using DummySUSHI as LepToken
 
 /*
  * Declaration of methods that are used in the rules.
@@ -57,7 +57,7 @@ methods {
 
 	// SUSHI token
 	SUSHI() returns (address) envfree // NOT USED
-	sushiToken.balanceOf(address) returns (uint256) // NOT USED
+	LepToken.balanceOf(address) returns (uint256) // NOT USED
 
 	// Dummy ERC20
 	tokenA.balanceOf(address) returns (uint256) // NOT USED
@@ -67,7 +67,7 @@ methods {
 	// SIG_ON_SUSHI_REWARD = 0xbb6cc2ef; // onSushiReward(uint256,address,uint256)
 	0xbb6cc2ef => NONDET
 
-	// MasterChefV1
+	// MasterLepV1
 	deposit(uint256 pid, uint256 amount) => NONDET
 
 	lpSupply(uint256 pid) returns (uint256) envfree

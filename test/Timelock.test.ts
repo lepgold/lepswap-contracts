@@ -11,14 +11,14 @@ describe("Timelock", function () {
     this.dev = this.signers[3]
     this.minter = this.signers[4]
 
-    this.SushiToken = await ethers.getContractFactory("SushiToken")
+    this.LepToken = await ethers.getContractFactory("LepToken")
     this.Timelock = await ethers.getContractFactory("Timelock")
     this.ERC20Mock = await ethers.getContractFactory("ERC20Mock", this.minter)
-    this.MasterChef = await ethers.getContractFactory("MasterChef")
+    this.MasterLep = await ethers.getContractFactory("MasterLep")
   })
 
   beforeEach(async function () {
-    this.sushi = await this.SushiToken.deploy()
+    this.sushi = await this.LepToken.deploy()
     this.timelock = await this.Timelock.deploy(this.bob.address, "259200")
   })
 
@@ -59,10 +59,10 @@ describe("Timelock", function () {
     expect(await this.sushi.owner()).to.equal(this.carol.address)
   })
 
-  it("should also work with MasterChef", async function () {
+  it("should also work with MasterLep", async function () {
     this.lp1 = await this.ERC20Mock.deploy("LPToken", "LP", "10000000000")
     this.lp2 = await this.ERC20Mock.deploy("LPToken", "LP", "10000000000")
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "1000", "0", "1000")
+    this.chef = await this.MasterLep.deploy(this.sushi.address, this.dev.address, "1000", "0", "1000")
     await this.sushi.transferOwnership(this.chef.address)
     await this.chef.add("100", this.lp1.address, true)
     await this.chef.transferOwnership(this.timelock.address)

@@ -15,7 +15,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   let sushiAddress;
 
   if (chainId === '31337') {
-    sushiAddress = (await deployments.get("SushiToken")).address
+    sushiAddress = (await deployments.get("LepToken")).address
   } else if (chainId in SUSHI) {
     sushiAddress = SUSHI[chainId]
   } else {

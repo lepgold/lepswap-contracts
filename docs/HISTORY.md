@@ -2,9 +2,9 @@
 
 ## Early
 
-1. SushiToken Deployed
-2. MasterChef Deployed
-3. SushiToken Ownership Transfered to MasterChef
+1. LepToken Deployed
+2. MasterLep Deployed
+3. LepToken Ownership Transfered to MasterLep
 4. TimeLock Deployed
 5. SushiFactory Deployed
 6. SushiRouter Deployed

@@ -14,20 +14,21 @@ module.exports = async function ({ getNamedAccounts, getChainId, deployments }) 
 
   const chainId = await getChainId()
 
-  if (!UNISWAP_ROUTER.has(chainId)) {
-    throw Error("No Uniswap Router")
+  if (UNISWAP_ROUTER.has(chainId)) {
+  //  throw Error("No Uniswap Router")
+
+
+    const uniswapRouterAddress = UNISWAP_ROUTER.get(chainId)
+
+    const sushiswapRouterAddress = (await deployments.get("UniswapV2Router02")).address
+
+    await deploy("SushiRoll", {
+      from: deployer,
+      args: [uniswapRouterAddress, sushiswapRouterAddress],
+      log: true,
+      deterministicDeployment: false
+    })
   }
-
-  const uniswapRouterAddress = UNISWAP_ROUTER.get(chainId)
-
-  const sushiswapRouterAddress = (await deployments.get("UniswapV2Router02")).address
-
-  await deploy("SushiRoll", {
-    from: deployer,
-    args: [uniswapRouterAddress, sushiswapRouterAddress],
-    log: true,
-    deterministicDeployment: false
-  })
 }
 
 module.exports.tags = ["SushiRoll"]

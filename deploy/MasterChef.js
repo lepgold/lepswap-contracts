@@ -3,11 +3,11 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 
   const { deployer, dev } = await getNamedAccounts()
 
-  const sushi = await ethers.getContract("SushiToken")
+  const sushi = await ethers.getContract("LepToken")
   
-  const { address } = await deploy("MasterChef", {
+  const { address } = await deploy("MasterLep", {
     from: deployer,
-    args: [sushi.address, dev, "1000000000000000000000", "0", "1000000000000000000000"],
+    args: [sushi.address, dev, "10000000000000000000", "10000000", "100000000"],
     log: true,
     deterministicDeployment: false
   })
@@ -18,13 +18,13 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     await (await sushi.transferOwnership(address)).wait()
   }
 
-  const masterChef = await ethers.getContract("MasterChef")
+  const masterChef = await ethers.getContract("MasterLep")
   if (await masterChef.owner() !== dev) {
-    // Transfer ownership of MasterChef to dev
-    console.log("Transfer ownership of MasterChef to dev")
+    // Transfer ownership of MasterLep to dev
+    console.log("Transfer ownership of MasterLep to dev")
     await (await masterChef.transferOwnership(dev)).wait()
   }
 }
 
-module.exports.tags = ["MasterChef"]
-module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "SushiToken"]
+module.exports.tags = ["MasterLep"]
+module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "LepToken"]

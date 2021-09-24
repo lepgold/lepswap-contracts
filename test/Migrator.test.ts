@@ -12,8 +12,8 @@ describe("Migrator", function () {
     this.UniswapV2Factory = await ethers.getContractFactory("UniswapV2Factory")
     this.UniswapV2Pair = await ethers.getContractFactory("UniswapV2Pair")
     this.ERC20Mock = await ethers.getContractFactory("ERC20Mock", this.minter)
-    this.SushiToken = await ethers.getContractFactory("SushiToken")
-    this.MasterChef = await ethers.getContractFactory("MasterChef")
+    this.LepToken = await ethers.getContractFactory("LepToken")
+    this.MasterLep = await ethers.getContractFactory("MasterLep")
     this.Migrator = await ethers.getContractFactory("Migrator")
   })
 
@@ -24,7 +24,7 @@ describe("Migrator", function () {
     this.factory2 = await this.UniswapV2Factory.deploy(this.alice.address)
     await this.factory2.deployed()
 
-    this.sushi = await this.SushiToken.deploy()
+    this.sushi = await this.LepToken.deploy()
     await this.sushi.deployed()
 
     this.weth = await this.ERC20Mock.deploy("WETH", "WETH", "100000000")
@@ -41,7 +41,7 @@ describe("Migrator", function () {
 
     this.lp2 = await this.UniswapV2Pair.attach((await pair2.wait()).events[0].args.pair)
 
-    this.chef = await this.MasterChef.deploy(this.sushi.address, this.dev.address, "1000", "0", "100000")
+    this.chef = await this.MasterLep.deploy(this.sushi.address, this.dev.address, "1000", "0", "100000")
     await this.chef.deployed()
 
     this.migrator = await this.Migrator.deploy(this.chef.address, this.factory1.address, this.factory2.address, "0")

@@ -1,10 +1,10 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 
-describe("SushiBar", function () {
+describe("LepGold", function () {
   before(async function () {
-    this.SushiToken = await ethers.getContractFactory("SushiToken")
-    this.SushiBar = await ethers.getContractFactory("SushiBar")
+    this.LepToken = await ethers.getContractFactory("LepToken")
+    this.LepGold = await ethers.getContractFactory("LepGold")
 
     this.signers = await ethers.getSigners()
     this.alice = this.signers[0]
@@ -13,8 +13,8 @@ describe("SushiBar", function () {
   })
 
   beforeEach(async function () {
-    this.sushi = await this.SushiToken.deploy()
-    this.bar = await this.SushiBar.deploy(this.sushi.address)
+    this.sushi = await this.LepToken.deploy()
+    this.bar = await this.LepGold.deploy(this.sushi.address)
     this.sushi.mint(this.alice.address, "100")
     this.sushi.mint(this.bob.address, "100")
     this.sushi.mint(this.carol.address, "100")
@@ -44,7 +44,7 @@ describe("SushiBar", function () {
     expect(await this.bar.balanceOf(this.alice.address)).to.equal("20")
     expect(await this.bar.balanceOf(this.bob.address)).to.equal("10")
     expect(await this.sushi.balanceOf(this.bar.address)).to.equal("30")
-    // SushiBar get 20 more SUSHIs from an external source.
+    // LepGold get 20 more SUSHIs from an external source.
     await this.sushi.connect(this.carol).transfer(this.bar.address, "20", { from: this.carol.address })
     // Alice deposits 10 more SUSHIs. She should receive 10*30/50 = 6 shares.
     await this.bar.enter("10")

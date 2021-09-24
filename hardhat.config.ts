@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
     },
     dev: {
       // Default to 1
-      default: 1,
+      default: "0x0D8e060CA2D847553ec14394ee6B304623E0d1d6",
       // dev address mainnet
       // 1: "",
     },
@@ -63,11 +63,13 @@ const config: HardhatUserConfig = {
       chainId: 1,
     },
     localhost: {
+      accounts,
       live: false,
       saveDeployments: true,
       tags: ["local"],
     },
     hardhat: {
+      accounts,
       forking: {
         enabled: process.env.FORKING === "true",
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,

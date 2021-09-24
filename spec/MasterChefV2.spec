@@ -1,8 +1,8 @@
 /*
- * This is a specification file for MasterChefV2's formal verification
+ * This is a specification file for MasterLepV2's formal verification
  * using the Certora prover.
  *
- * Run this file with scripts/_runMasterChefV2.sh
+ * Run this file with scripts/_runMasterLepV2.sh
  */
 
  // All Passing!
@@ -11,7 +11,7 @@
 // Declaration of contracts used in the sepc 
 using DummyERC20A as tokenA
 using DummyERC20B as tokenB
-using DummySUSHI as sushiToken
+using DummySUSHI as LepToken
 
 /*
  * Declaration of methods that are used in the rules.
@@ -55,7 +55,7 @@ methods {
 	// Rewarder
 	onSushiReward(uint256, address, address, uint256, uint256) => NONDET
 
-	// MasterChefV1
+	// MasterLepV1
 	deposit(uint256 pid, uint256 amount) => NONDET
 
 	migrate(address _lpToken) => NONDET
@@ -299,15 +299,15 @@ rule sushiGivenInHarvestEqualsPendingSushi(uint256 pid, address user, address to
 	env e;
 
 	require to == user && user != currentContract && e.msg.sender == user;
-	require sushiToken == SUSHI();
+	require LepToken == SUSHI();
 
-	uint256 userSushiBalance = sushiToken.balanceOf(e, user);
+	uint256 userSushiBalance = LepToken.balanceOf(e, user);
 	uint256 userPendingSushi = pendingSushi(e, pid, user);
 
 	// Does success return value matters? Check with Nurit
 	harvest(e, pid, to);
 
-	uint256 userSushiBalance_ = sushiToken.balanceOf(e, user);
+	uint256 userSushiBalance_ = LepToken.balanceOf(e, user);
 
 	assert(userSushiBalance_ == (userSushiBalance + userPendingSushi),
 		   "pending sushi not equal to the sushi given in harvest");
