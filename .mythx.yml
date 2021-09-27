@@ -10,7 +10,7 @@ analyze:
     remappings:
         - "@openzeppelin=node_modules/@openzeppelin"
     targets:
-        - contracts/GoldMaker.sol:GoldMaker
+        - contracts/GoldMakingLep.sol:GoldMakingLep
         - contracts/uniswapv2/UniswapV2Pair.sol:UniswapV2Pair
         - contracts/uniswapv2/UniswapV2Factory.sol:UniswapV2Factory
         - contracts/uniswapv2/UniswapV2ERC20.sol:UniswapV2ERC20

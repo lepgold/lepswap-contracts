@@ -156,7 +156,7 @@ task("maker:serve", "LepGold serve")
 .addParam("a", "Token A")
 .addParam("b", "Token B")
 .setAction(async function ({ a, b }, { ethers: { getNamedSigner } }, runSuper) {
-  const maker = await ethers.getContract("GoldMaker")
+  const maker = await ethers.getContract("GoldMakingLep")
 
   await (await maker.connect(await getNamedSigner("dev")).convert(a, b, { gasLimitgasLimit: 5198000 })).wait()
 });

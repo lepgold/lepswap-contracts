@@ -20,7 +20,7 @@ describe("LepToken", function () {
     const symbol = await this.sushi.symbol()
     const decimals = await this.sushi.decimals()
     expect(name, "LepToken")
-    expect(symbol, "SUSHI")
+    expect(symbol, "LEP")
     expect(decimals, "18")
   })
 

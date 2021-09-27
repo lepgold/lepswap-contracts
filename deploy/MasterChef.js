@@ -7,7 +7,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
   
   const { address } = await deploy("MasterLep", {
     from: deployer,
-    args: [sushi.address, dev, "10000000000000000000", "10000000", "100000000"],
+    args: [sushi.address, dev, "20000000000000000000", "11408853", "12013653"],
     log: true,
     deterministicDeployment: false
   })

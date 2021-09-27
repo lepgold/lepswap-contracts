@@ -21,19 +21,19 @@ module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts,
     throw Error("No WETH!")
   }
 
-  await deploy("GoldMaker", {
+  await deploy("GoldMakingLep", {
     from: deployer,
     args: [factory.address, bar.address, sushi.address, wethAddress],
     log: true,
     deterministicDeployment: false
   })
 
-  const maker = await ethers.getContract("GoldMaker")
+  const maker = await ethers.getContract("GoldMakingLep")
   if (await maker.owner() !== dev) {
     console.log("Setting maker owner")
     await (await maker.transferOwnership(dev, true, false)).wait()
   }
 }
 
-module.exports.tags = ["GoldMaker"]
+module.exports.tags = ["GoldMakingLep"]
 module.exports.dependencies = ["UniswapV2Factory", "UniswapV2Router02", "LepGold", "LepToken"]

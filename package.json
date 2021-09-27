@@ -1,6 +1,6 @@
 {
   "name": "@lepswap/core",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "license": "MIT",
   "types": "./types/index.ts",
   "description": "Core contracts for the LEPswap protocol",

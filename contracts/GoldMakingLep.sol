@@ -11,11 +11,11 @@ import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
 import "./Ownable.sol";
 
-// GoldMaker is MasterLep's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
+// GoldMakingLep is MasterLep's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
 // This contract handles "serving up" rewards for xSushi holders by trading tokens collected from fees for Sushi.
 
 // T1 - T4: OK
-contract GoldMaker is Ownable {
+contract GoldMakingLep is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -23,7 +23,7 @@ contract GoldMaker is Ownable {
     IUniswapV2Factory public immutable factory;
     //0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac
     // V1 - V5: OK
-    address public immutable bar;
+    address public immutable gold;
     //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
     // V1 - V5: OK
     address private immutable sushi;
@@ -49,12 +49,12 @@ contract GoldMaker is Ownable {
 
     constructor(
         address _factory,
-        address _bar,
+        address _gold,
         address _sushi,
         address _weth
     ) public {
         factory = IUniswapV2Factory(_factory);
-        bar = _bar;
+        gold = _gold;
         sushi = _sushi;
         weth = _weth;
     }
@@ -74,7 +74,7 @@ contract GoldMaker is Ownable {
         // Checks
         require(
             token != sushi && token != weth && token != bridge,
-            "GoldMaker: Invalid bridge"
+            "GoldMakingLep: Invalid bridge"
         );
 
         // Effects
@@ -87,7 +87,7 @@ contract GoldMaker is Ownable {
     // C6: It's not a fool proof solution, but it prevents flash loans, so here it's ok to use tx.origin
     modifier onlyEOA() {
         // Try to make flash-loan exploit harder to do by only allowing externally owned addresses.
-        require(msg.sender == tx.origin, "GoldMaker: must use EOA");
+        require(msg.sender == tx.origin, "GoldMakingLep: must use EOA");
         _;
     }
 
@@ -121,7 +121,7 @@ contract GoldMaker is Ownable {
         // Interactions
         // S1 - S4: OK
         IUniswapV2Pair pair = IUniswapV2Pair(factory.getPair(token0, token1));
-        require(address(pair) != address(0), "GoldMaker: Invalid pair");
+        require(address(pair) != address(0), "GoldMakingLep: Invalid pair");
         // balanceOf: S1 - S4: OK
         // transfer: X1 - X5: OK
         IERC20(address(pair)).safeTransfer(
@@ -156,7 +156,7 @@ contract GoldMaker is Ownable {
         if (token0 == token1) {
             uint256 amount = amount0.add(amount1);
             if (token0 == sushi) {
-                IERC20(sushi).safeTransfer(bar, amount);
+                IERC20(sushi).safeTransfer(gold, amount);
                 sushiOut = amount;
             } else if (token0 == weth) {
                 sushiOut = _toSUSHI(weth, amount);
@@ -167,11 +167,11 @@ contract GoldMaker is Ownable {
             }
         } else if (token0 == sushi) {
             // eg. SUSHI - ETH
-            IERC20(sushi).safeTransfer(bar, amount0);
+            IERC20(sushi).safeTransfer(gold, amount0);
             sushiOut = _toSUSHI(token1, amount1).add(amount0);
         } else if (token1 == sushi) {
             // eg. USDT - SUSHI
-            IERC20(sushi).safeTransfer(bar, amount1);
+            IERC20(sushi).safeTransfer(gold, amount1);
             sushiOut = _toSUSHI(token0, amount0).add(amount1);
         } else if (token0 == weth) {
             // eg. ETH - USDC
@@ -229,7 +229,7 @@ contract GoldMaker is Ownable {
         // X1 - X5: OK
         IUniswapV2Pair pair =
             IUniswapV2Pair(factory.getPair(fromToken, toToken));
-        require(address(pair) != address(0), "GoldMaker: Cannot convert");
+        require(address(pair) != address(0), "GoldMakingLep: Cannot convert");
 
         // Interactions
         // X1 - X5: OK
@@ -259,6 +259,6 @@ contract GoldMaker is Ownable {
         returns (uint256 amountOut)
     {
         // X1 - X5: OK
-        amountOut = _swap(token, sushi, amountIn, bar);
+        amountOut = _swap(token, sushi, amountIn, gold);
     }
 }

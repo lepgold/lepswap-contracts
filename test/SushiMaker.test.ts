@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { prepare, deploy, getBigNumber, createSLP } from "./utilities"
 
-describe("GoldMaker", function () {
+describe("GoldMakingLep", function () {
   before(async function () {
-    await prepare(this, ["GoldMaker", "LepGold", "GoldMakerExploitMock", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair"])
+    await prepare(this, ["GoldMakingLep", "LepGold", "GoldMakingLepExploitMock", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair"])
   })
 
   beforeEach(async function () {
@@ -17,8 +17,8 @@ describe("GoldMaker", function () {
       ["factory", this.UniswapV2Factory, [this.alice.address]],
     ])
     await deploy(this, [["bar", this.LepGold, [this.sushi.address]]])
-    await deploy(this, [["sushiMaker", this.GoldMaker, [this.factory.address, this.bar.address, this.sushi.address, this.weth.address]]])
-    await deploy(this, [["exploiter", this.GoldMakerExploitMock, [this.sushiMaker.address]]])
+    await deploy(this, [["sushiMaker", this.GoldMakingLep, [this.factory.address, this.bar.address, this.sushi.address, this.weth.address]]])
+    await deploy(this, [["exploiter", this.GoldMakingLepExploitMock, [this.sushiMaker.address]]])
     await createSLP(this, "sushiEth", this.sushi, this.weth, getBigNumber(10))
     await createSLP(this, "strudelEth", this.strudel, this.weth, getBigNumber(10))
     await createSLP(this, "daiEth", this.dai, this.weth, getBigNumber(10))
@@ -30,15 +30,15 @@ describe("GoldMaker", function () {
   })
   describe("setBridge", function () {
     it("does not allow to set bridge for Sushi", async function () {
-      await expect(this.sushiMaker.setBridge(this.sushi.address, this.weth.address)).to.be.revertedWith("GoldMaker: Invalid bridge")
+      await expect(this.sushiMaker.setBridge(this.sushi.address, this.weth.address)).to.be.revertedWith("GoldMakingLep: Invalid bridge")
     })
 
     it("does not allow to set bridge for WETH", async function () {
-      await expect(this.sushiMaker.setBridge(this.weth.address, this.sushi.address)).to.be.revertedWith("GoldMaker: Invalid bridge")
+      await expect(this.sushiMaker.setBridge(this.weth.address, this.sushi.address)).to.be.revertedWith("GoldMakingLep: Invalid bridge")
     })
 
     it("does not allow to set bridge to itself", async function () {
-      await expect(this.sushiMaker.setBridge(this.dai.address, this.dai.address)).to.be.revertedWith("GoldMaker: Invalid bridge")
+      await expect(this.sushiMaker.setBridge(this.dai.address, this.dai.address)).to.be.revertedWith("GoldMakingLep: Invalid bridge")
     })
 
     it("emits correct event on bridge", async function () {
@@ -127,16 +127,16 @@ describe("GoldMaker", function () {
 
     it("reverts if caller is not EOA", async function () {
       await this.sushiEth.transfer(this.sushiMaker.address, getBigNumber(1))
-      await expect(this.exploiter.convert(this.sushi.address, this.weth.address)).to.be.revertedWith("GoldMaker: must use EOA")
+      await expect(this.exploiter.convert(this.sushi.address, this.weth.address)).to.be.revertedWith("GoldMakingLep: must use EOA")
     })
 
     it("reverts if pair does not exist", async function () {
-      await expect(this.sushiMaker.convert(this.mic.address, this.micUSDC.address)).to.be.revertedWith("GoldMaker: Invalid pair")
+      await expect(this.sushiMaker.convert(this.mic.address, this.micUSDC.address)).to.be.revertedWith("GoldMakingLep: Invalid pair")
     })
 
     it("reverts if no path is available", async function () {
       await this.micUSDC.transfer(this.sushiMaker.address, getBigNumber(1))
-      await expect(this.sushiMaker.convert(this.mic.address, this.usdc.address)).to.be.revertedWith("GoldMaker: Cannot convert")
+      await expect(this.sushiMaker.convert(this.mic.address, this.usdc.address)).to.be.revertedWith("GoldMakingLep: Cannot convert")
       expect(await this.sushi.balanceOf(this.sushiMaker.address)).to.equal(0)
       expect(await this.micUSDC.balanceOf(this.sushiMaker.address)).to.equal(getBigNumber(1))
       expect(await this.sushi.balanceOf(this.bar.address)).to.equal(0)
