@@ -519,10 +519,10 @@ interface IStrategy {
     function exit(uint256 balance) external returns (int256 amountAdded);
 }
 
-// File @sushiswap/bentobox-sdk/contracts/IBentoBoxV1.sol@v1.0.1
+// File @sushiswap/bentobox-sdk/contracts/ITreasureChestV1.sol@v1.0.1
 // License-Identifier: MIT
 
-interface IBentoBoxV1 {
+interface ITreasureChestV1 {
     event LogDeploy(address indexed masterContract, bytes data, address indexed cloneAddress);
     event LogDeposit(address indexed token, address indexed from, address indexed to, uint256 amount, uint256 share);
     event LogFlashLoan(address indexed borrower, address indexed token, uint256 amount, uint256 feeAmount, address indexed receiver);
@@ -762,7 +762,7 @@ interface ISwapper {
 /// @title KashiPair
 /// @dev This contract allows contract calls to any contract (except BentoBox)
 /// from arbitrary callers thus, don't trust calls from this contract in any circumstances.
-contract KashiPairMediumRiskV1 is ERC20, BoringOwnable, IMasterContract {
+contract LepPairMediumRiskV1 is ERC20, BoringOwnable, IMasterContract {
     using BoringMath for uint256;
     using BoringMath128 for uint128;
     using RebaseLibrary for Rebase;
@@ -780,8 +780,8 @@ contract KashiPairMediumRiskV1 is ERC20, BoringOwnable, IMasterContract {
     event LogWithdrawFees(address indexed feeTo, uint256 feesEarnedFraction);
 
     // Immutables (for MasterContract and all clones)
-    IBentoBoxV1 public immutable bentoBox;
-    KashiPairMediumRiskV1 public immutable masterContract;
+    ITreasureChestV1 public immutable bentoBox;
+    LepPairMediumRiskV1 public immutable masterContract;
 
     // MasterContract variables
     address public feeTo;
@@ -862,7 +862,7 @@ contract KashiPairMediumRiskV1 is ERC20, BoringOwnable, IMasterContract {
     uint256 private constant BORROW_OPENING_FEE_PRECISION = 1e5;
 
     /// @notice The constructor is only used for the initial master contract. Subsequent clones are initialised via `init`.
-    constructor(IBentoBoxV1 bentoBox_) public {
+    constructor(ITreasureChestV1 bentoBox_) public {
         bentoBox = bentoBox_;
         masterContract = this;
         feeTo = msg.sender;

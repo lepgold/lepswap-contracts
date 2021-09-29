@@ -26,7 +26,7 @@ contract GoldMakingLep is Ownable {
     address public immutable gold;
     //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
     // V1 - V5: OK
-    address private immutable sushi;
+    address private immutable lep;
     //0x6B3595068778DD592e39A122f4f5a5cF09C90fE2
     // V1 - V5: OK
     address private immutable weth;
@@ -50,12 +50,12 @@ contract GoldMakingLep is Ownable {
     constructor(
         address _factory,
         address _gold,
-        address _sushi,
+        address _lep,
         address _weth
     ) public {
         factory = IUniswapV2Factory(_factory);
         gold = _gold;
-        sushi = _sushi;
+        lep = _lep;
         weth = _weth;
     }
 
@@ -73,7 +73,7 @@ contract GoldMakingLep is Ownable {
     function setBridge(address token, address bridge) external onlyOwner {
         // Checks
         require(
-            token != sushi && token != weth && token != bridge,
+            token != lep && token != weth && token != bridge,
             "GoldMakingLep: Invalid bridge"
         );
 
@@ -151,37 +151,37 @@ contract GoldMakingLep is Ownable {
         address token1,
         uint256 amount0,
         uint256 amount1
-    ) internal returns (uint256 sushiOut) {
+    ) internal returns (uint256 lepOut) {
         // Interactions
         if (token0 == token1) {
             uint256 amount = amount0.add(amount1);
-            if (token0 == sushi) {
-                IERC20(sushi).safeTransfer(gold, amount);
-                sushiOut = amount;
+            if (token0 == lep) {
+                IERC20(lep).safeTransfer(gold, amount);
+                lepOut = amount;
             } else if (token0 == weth) {
-                sushiOut = _toSUSHI(weth, amount);
+                lepOut = _toSUSHI(weth, amount);
             } else {
                 address bridge = bridgeFor(token0);
                 amount = _swap(token0, bridge, amount, address(this));
-                sushiOut = _convertStep(bridge, bridge, amount, 0);
+                lepOut = _convertStep(bridge, bridge, amount, 0);
             }
-        } else if (token0 == sushi) {
+        } else if (token0 == lep) {
             // eg. SUSHI - ETH
-            IERC20(sushi).safeTransfer(gold, amount0);
-            sushiOut = _toSUSHI(token1, amount1).add(amount0);
-        } else if (token1 == sushi) {
+            IERC20(lep).safeTransfer(gold, amount0);
+            lepOut = _toSUSHI(token1, amount1).add(amount0);
+        } else if (token1 == lep) {
             // eg. USDT - SUSHI
-            IERC20(sushi).safeTransfer(gold, amount1);
-            sushiOut = _toSUSHI(token0, amount0).add(amount1);
+            IERC20(lep).safeTransfer(gold, amount1);
+            lepOut = _toSUSHI(token0, amount0).add(amount1);
         } else if (token0 == weth) {
             // eg. ETH - USDC
-            sushiOut = _toSUSHI(
+            lepOut = _toSUSHI(
                 weth,
                 _swap(token1, weth, amount1, address(this)).add(amount0)
             );
         } else if (token1 == weth) {
             // eg. USDT - ETH
-            sushiOut = _toSUSHI(
+            lepOut = _toSUSHI(
                 weth,
                 _swap(token0, weth, amount0, address(this)).add(amount1)
             );
@@ -191,7 +191,7 @@ contract GoldMakingLep is Ownable {
             address bridge1 = bridgeFor(token1);
             if (bridge0 == token1) {
                 // eg. MIC - USDT - and bridgeFor(MIC) = USDT
-                sushiOut = _convertStep(
+                lepOut = _convertStep(
                     bridge0,
                     token1,
                     _swap(token0, bridge0, amount0, address(this)),
@@ -199,14 +199,14 @@ contract GoldMakingLep is Ownable {
                 );
             } else if (bridge1 == token0) {
                 // eg. WBTC - DSD - and bridgeFor(DSD) = WBTC
-                sushiOut = _convertStep(
+                lepOut = _convertStep(
                     token0,
                     bridge1,
                     amount0,
                     _swap(token1, bridge1, amount1, address(this))
                 );
             } else {
-                sushiOut = _convertStep(
+                lepOut = _convertStep(
                     bridge0,
                     bridge1, // eg. USDT - DSD - and bridgeFor(DSD) = WBTC
                     _swap(token0, bridge0, amount0, address(this)),
@@ -259,6 +259,6 @@ contract GoldMakingLep is Ownable {
         returns (uint256 amountOut)
     {
         // X1 - X5: OK
-        amountOut = _swap(token, sushi, amountIn, gold);
+        amountOut = _swap(token, lep, amountIn, gold);
     }
 }

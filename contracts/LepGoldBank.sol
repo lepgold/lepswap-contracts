@@ -9,7 +9,7 @@ import "./uniswapv2/interfaces/IUniswapV2Factory.sol";
 
 import "./Ownable.sol";
 
-interface IBentoBoxWithdraw {
+interface ITreasureChestWithdraw {
     function withdraw(
         IERC20 token_,
         address from,
@@ -19,26 +19,26 @@ interface IBentoBoxWithdraw {
     ) external returns (uint256 amountOut, uint256 shareOut);
 }
 
-interface IKashiWithdrawFee {
+interface IBankWithdrawFee {
     function asset() external view returns (address);
     function balanceOf(address account) external view returns (uint256);
     function withdrawFees() external;
     function removeAsset(address to, uint256 fraction) external returns (uint256 share);
 }
 
-// SushiMakerKashi is MasterLep's left hand and kinda a wizard. He can cook up Sushi from pretty much anything!
-// This contract handles "serving up" rewards for xSushi holders by trading tokens collected from Kashi fees for Sushi.
-contract SushiMakerKashi is Ownable {
+// LepGoldBank is MasterLep's left hand and kinda a wizard. He can cook up Lep from pretty much anything!
+// This contract handles "serving up" rewards for xLep holders by trading tokens collected from Kashi fees for Lep.
+contract LepGoldBank is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
     IUniswapV2Factory private immutable factory;
     //0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac
-    address private immutable bar;
+    address private immutable gold;
     //0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272
-    IBentoBoxWithdraw private immutable bentoBox;
+    ITreasureChestWithdraw private immutable bentoBox;
     //0xF5BCE5077908a1b7370B9ae04AdC565EBd643966 
-    address private immutable sushi;
+    address private immutable lep;
     //0x6B3595068778DD592e39A122f4f5a5cF09C90fE2
     address private immutable weth;
     //0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
@@ -58,16 +58,16 @@ contract SushiMakerKashi is Ownable {
 
     constructor(
         IUniswapV2Factory _factory,
-        address _bar,
-        IBentoBoxWithdraw _bentoBox,
-        address _sushi,
+        address _gold,
+        ITreasureChestWithdraw _bentoBox,
+        address _lep,
         address _weth,
         bytes32 _pairCodeHash
     ) public {
         factory = _factory;
-        bar = _bar;
+        gold = _gold;
         bentoBox = _bentoBox;
-        sushi = _sushi;
+        lep = _lep;
         weth = _weth;
         pairCodeHash = _pairCodeHash;
     }
@@ -75,7 +75,7 @@ contract SushiMakerKashi is Ownable {
     function setBridge(address token, address bridge) external onlyOwner {
         // Checks
         require(
-            token != sushi && token != weth && token != bridge,
+            token != lep && token != weth && token != bridge,
             "Maker: Invalid bridge"
         );
         // Effects
@@ -89,17 +89,17 @@ contract SushiMakerKashi is Ownable {
         _;
     }
 
-    function convert(IKashiWithdrawFee kashiPair) external onlyEOA {
+    function convert(IBankWithdrawFee kashiPair) external onlyEOA {
         _convert(kashiPair);
     }
 
-    function convertMultiple(IKashiWithdrawFee[] calldata kashiPair) external onlyEOA {
+    function convertMultiple(IBankWithdrawFee[] calldata kashiPair) external onlyEOA {
         for (uint256 i = 0; i < kashiPair.length; i++) {
             _convert(kashiPair[i]);
         }
     }
 
-    function _convert(IKashiWithdrawFee kashiPair) private {
+    function _convert(IBankWithdrawFee kashiPair) private {
         // update Kashi fees for this Maker contract (`feeTo`)
         kashiPair.withdrawFees();
 
@@ -119,19 +119,19 @@ contract SushiMakerKashi is Ownable {
         );
     }
 
-    function _convertStep(address token0, uint256 amount0) private returns (uint256 sushiOut) {
-        if (token0 == sushi) {
-            IERC20(token0).safeTransfer(bar, amount0);
-            sushiOut = amount0;
+    function _convertStep(address token0, uint256 amount0) private returns (uint256 lepOut) {
+        if (token0 == lep) {
+            IERC20(token0).safeTransfer(gold, amount0);
+            lepOut = amount0;
         } else if (token0 == weth) {
-            sushiOut = _swap(token0, sushi, amount0, bar);
+            lepOut = _swap(token0, lep, amount0, gold);
         } else {
             address bridge = _bridges[token0];
             if (bridge == address(0)) {
                 bridge = weth;
             }
             uint256 amountOut = _swap(token0, bridge, amount0, address(this));
-            sushiOut = _convertStep(bridge, amountOut);
+            lepOut = _convertStep(bridge, amountOut);
         }
     }
 
