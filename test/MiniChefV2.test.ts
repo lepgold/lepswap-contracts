@@ -27,7 +27,7 @@ describe("MiniChefV2", function () {
 
     await this.sushi.mint(this.chef.address, getBigNumber(10000))
     await this.lp.approve(this.chef.address, getBigNumber(10))
-    await this.chef.setSushiPerSecond("10000000000000000")
+    await this.chef.setLepPerSecond("10000000000000000")
     await this.rlp.transfer(this.bob.address, getBigNumber(1))
   })
 
@@ -71,8 +71,8 @@ describe("MiniChefV2", function () {
       let timestamp2 = (await ethers.provider.getBlock(log2.blockNumber)).timestamp
       let timestamp = (await ethers.provider.getBlock(log.blockNumber)).timestamp
       let expectedSushi = BigNumber.from("10000000000000000").mul(timestamp2 - timestamp)
-      let pendingSushi = await this.chef.pendingSushi(0, this.alice.address)
-      expect(pendingSushi).to.be.equal(expectedSushi)
+      let pendingLep = await this.chef.pendingLep(0, this.alice.address)
+      expect(pendingLep).to.be.equal(expectedSushi)
     })
     it("When time is lastRewardTime", async function () {
       await this.chef.add(10, this.rlp.address, this.rewarder.address)
@@ -83,8 +83,8 @@ describe("MiniChefV2", function () {
       let timestamp2 = (await ethers.provider.getBlock(log2.blockNumber)).timestamp
       let timestamp = (await ethers.provider.getBlock(log.blockNumber)).timestamp
       let expectedSushi = BigNumber.from("10000000000000000").mul(timestamp2 - timestamp)
-      let pendingSushi = await this.chef.pendingSushi(0, this.alice.address)
-      expect(pendingSushi).to.be.equal(expectedSushi)
+      let pendingLep = await this.chef.pendingLep(0, this.alice.address)
+      expect(pendingLep).to.be.equal(expectedSushi)
     })
   })
 
@@ -126,7 +126,7 @@ describe("MiniChefV2", function () {
             .to.emit(this.chef, "LogUpdatePool")
             .withArgs(0, (await this.chef.poolInfo(0)).lastRewardTime,
               (await this.rlp.balanceOf(this.chef.address)),
-              (await this.chef.poolInfo(0)).accSushiPerShare)
+              (await this.chef.poolInfo(0)).accLepPerShare)
     })
 
     it("Should take else path", async function () {

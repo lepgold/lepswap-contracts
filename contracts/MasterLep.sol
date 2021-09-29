@@ -64,7 +64,7 @@ contract MasterLep is Ownable {
     // SUSHI tokens created per block.
     uint256 public lepPerBlock;
     // Bonus muliplier for early sushi makers.
-    uint256 public constant BONUS_MULTIPLIER = 5;
+    uint256 public constant BONUS_MULTIPLIER = 10;
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
     IMigratorChef public migrator;
     // Info of each pool.

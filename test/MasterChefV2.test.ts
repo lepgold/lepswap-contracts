@@ -78,8 +78,8 @@ describe("MasterLepV2", function () {
       let expectedSushi = getBigNumber(100)
         .mul(log2.blockNumber + 1 - log.blockNumber)
         .div(2)
-      let pendingSushi = await this.chef2.pendingSushi(0, this.alice.address)
-      expect(pendingSushi).to.be.equal(expectedSushi)
+      let pendingLep = await this.chef2.pendingLep(0, this.alice.address)
+      expect(pendingLep).to.be.equal(expectedSushi)
     })
     it("When block is lastRewardBlock", async function () {
       await this.chef2.add(10, this.rlp.address, this.rewarder.address)
@@ -90,8 +90,8 @@ describe("MasterLepV2", function () {
       let expectedSushi = getBigNumber(100)
         .mul(log2.blockNumber - log.blockNumber)
         .div(2)
-      let pendingSushi = await this.chef2.pendingSushi(0, this.alice.address)
-      expect(pendingSushi).to.be.equal(expectedSushi)
+      let pendingLep = await this.chef2.pendingLep(0, this.alice.address)
+      expect(pendingLep).to.be.equal(expectedSushi)
     })
   })
 
@@ -134,7 +134,7 @@ describe("MasterLepV2", function () {
           0,
           (await this.chef2.poolInfo(0)).lastRewardBlock,
           await this.rlp.balanceOf(this.chef2.address),
-          (await this.chef2.poolInfo(0)).accSushiPerShare
+          (await this.chef2.poolInfo(0)).accLepPerShare
         )
     })
 

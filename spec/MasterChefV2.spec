@@ -24,7 +24,7 @@ methods {
 	userInfoRewardDebt(uint256 pid, address user) returns (int256) envfree 
 	userLpTokenBalanceOf(uint256 pid, address user) returns (uint256) envfree
 
-	poolInfoAccSushiPerShare(uint256 pid) returns (uint128) envfree
+	poolInfoAccLepPerShare(uint256 pid) returns (uint128) envfree
 	poolInfoLastRewardBlock(uint256 pid) returns (uint64) envfree
 	poolInfoAllocPoint(uint256 pid) returns (uint64) envfree
 	totalAllocPoint() returns (uint256) envfree
@@ -114,17 +114,17 @@ rule integrityOfTotalAllocPoint(method f) {
 	}
 }
 
-rule monotonicityOfAccSushiPerShare(uint256 pid, method f) {
+rule monotonicityOfAccLepPerShare(uint256 pid, method f) {
 	env e;
 
-	uint128 _poolInfoAccSushiPerShare = poolInfoAccSushiPerShare(pid);
+	uint128 _poolInfoAccLepPerShare = poolInfoAccLepPerShare(pid);
 
 	calldataarg args;
 	f(e, args);
 
-	uint128 poolInfoAccSushiPerShare_ = poolInfoAccSushiPerShare(pid);
+	uint128 poolInfoAccLepPerShare_ = poolInfoAccLepPerShare(pid);
 
-	assert compareUint128(poolInfoAccSushiPerShare_, _poolInfoAccSushiPerShare);
+	assert compareUint128(poolInfoAccLepPerShare_, _poolInfoAccLepPerShare);
 }
 
 rule monotonicityOfLastRewardBlock(uint256 pid, method f) {
@@ -203,7 +203,7 @@ rule noChangeToOtherUsersRewardDebt(method f, uint256 pid, uint256 amount,
 rule noChangeToOtherPool(uint256 pid, uint256 otherPid) {
 	require pid != otherPid;
 
-	uint128 _otherAccSushiPerShare = poolInfoAccSushiPerShare(otherPid);
+	uint128 _otherAccLepPerShare = poolInfoAccLepPerShare(otherPid);
 	uint64 _otherLastRewardBlock = poolInfoLastRewardBlock(otherPid);
 	uint64 _otherAllocPoint = poolInfoAllocPoint(otherPid);
 
@@ -214,11 +214,11 @@ rule noChangeToOtherPool(uint256 pid, uint256 otherPid) {
 
 	callFunctionWithParams(f, pid, msgSender, to);
 
-	uint128 otherAccSushiPerShare_ = poolInfoAccSushiPerShare(otherPid);
+	uint128 otherAccLepPerShare_ = poolInfoAccLepPerShare(otherPid);
 	uint64 otherLastRewardBlock_ = poolInfoLastRewardBlock(otherPid);
 	uint64 otherAllocPoint_ = poolInfoAllocPoint(otherPid);
 
-	assert(_otherAccSushiPerShare == otherAccSushiPerShare_, "accSushiPerShare changed");
+	assert(_otherAccLepPerShare == otherAccLepPerShare_, "accLepPerShare changed");
 
 	assert(_otherLastRewardBlock == otherLastRewardBlock_, "lastRewardBlock changed");
 

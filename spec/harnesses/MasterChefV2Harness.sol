@@ -25,8 +25,8 @@ contract MasterLepV2Harness is MasterLepV2 {
         return lpToken[pid].balanceOf(user);
     }
 
-    function poolInfoAccSushiPerShare(uint256 pid) public view returns (uint128) {
-        return poolInfo[pid].accSushiPerShare;
+    function poolInfoAccLepPerShare(uint256 pid) public view returns (uint128) {
+        return poolInfo[pid].accLepPerShare;
     }
 
     function poolInfoLastRewardBlock(uint256 pid) public view returns (uint64) {

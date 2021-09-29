@@ -16,8 +16,8 @@ interface IMigratorChef {
     function migrate(IERC20 token) external returns (IERC20);
 }
 
-/// @notice The (older) MasterLep contract gives out a constant number of SUSHI tokens per block.
-/// It is the only address with minting rights for SUSHI.
+/// @notice The (older) MasterLep contract gives out a constant number of LEP tokens per block.
+/// It is the only address with minting rights for LEP.
 /// The idea for this MasterLep V2 (MCV2) contract is therefore to be the owner of a dummy token
 /// that is deposited into the MasterLep V1 (MCV1) contract.
 /// The allocation point for this pool on MCV1 is the total allocation point for all pools that receive double incentives.
@@ -29,7 +29,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Info of each MCV2 user.
     /// `amount` LP token amount the user has provided.
-    /// `rewardDebt` The amount of SUSHI entitled to the user.
+    /// `rewardDebt` The amount of LEP entitled to the user.
     struct UserInfo {
         uint256 amount;
         int256 rewardDebt;
@@ -37,15 +37,15 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Info of each MCV2 pool.
     /// `allocPoint` The amount of allocation points assigned to the pool.
-    /// Also known as the amount of SUSHI to distribute per block.
+    /// Also known as the amount of LEP to distribute per block.
     struct PoolInfo {
         uint128 accLepPerShare;
         uint64 lastRewardTime;
         uint64 allocPoint;
     }
 
-    /// @notice Address of SUSHI contract.
-    IERC20 public immutable SUSHI;
+    /// @notice Address of LEP contract.
+    IERC20 public immutable LEP;
     // @notice The migrator contract. It has a lot of power. Can only be set through governance (owner).
     IMigratorChef public migrator;
 
@@ -71,11 +71,11 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     event LogPoolAddition(uint256 indexed pid, uint256 allocPoint, IERC20 indexed lpToken, IRewarder indexed rewarder);
     event LogSetPool(uint256 indexed pid, uint256 allocPoint, IRewarder indexed rewarder, bool overwrite);
     event LogUpdatePool(uint256 indexed pid, uint64 lastRewardTime, uint256 lpSupply, uint256 accLepPerShare);
-    event LogSushiPerSecond(uint256 lepPerSecond);
+    event LogLepPerSecond(uint256 lepPerSecond);
 
     /// @param _lep The SUSHI token contract address.
     constructor(IERC20 _lep) public {
-        SUSHI = _lep;
+        LEP = _lep;
     }
 
     /// @notice Returns the number of MCV2 pools.
@@ -101,7 +101,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         emit LogPoolAddition(lpToken.length.sub(1), allocPoint, _lpToken, _rewarder);
     }
 
-    /// @notice Update the given pool's SUSHI allocation point and `IRewarder` contract. Can only be called by the owner.
+    /// @notice Update the given pool's LEP allocation point and `IRewarder` contract. Can only be called by the owner.
     /// @param _pid The index of the pool. See `poolInfo`.
     /// @param _allocPoint New AP of the pool.
     /// @param _rewarder Address of the rewarder delegate.
@@ -115,9 +115,9 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
     /// @notice Sets the lep per second to be distributed. Can only be called by the owner.
     /// @param _lepPerSecond The amount of Sushi to be distributed per second.
-    function setSushiPerSecond(uint256 _lepPerSecond) public onlyOwner {
+    function setLepPerSecond(uint256 _lepPerSecond) public onlyOwner {
         lepPerSecond = _lepPerSecond;
-        emit LogSushiPerSecond(_lepPerSecond);
+        emit LogLepPerSecond(_lepPerSecond);
     }
 
     /// @notice Set the `migrator` contract. Can only be called by the owner.
@@ -138,10 +138,10 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         lpToken[_pid] = newLpToken;
     }
 
-    /// @notice View function to see pending SUSHI on frontend.
+    /// @notice View function to see pending LEP on frontend.
     /// @param _pid The index of the pool. See `poolInfo`.
     /// @param _user Address of user.
-    /// @return pending SUSHI reward for a given user.
+    /// @return pending LEP reward for a given user.
     function pendingLep(uint256 _pid, address _user) external view returns (uint256 pending) {
         PoolInfo memory pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
@@ -182,7 +182,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         }
     }
 
-    /// @notice Deposit LP tokens to MCV2 for SUSHI allocation.
+    /// @notice Deposit LP tokens to MCV2 for LEP allocation.
     /// @param pid The index of the pool. See `poolInfo`.
     /// @param amount LP token amount to deposit.
     /// @param to The receiver of `amount` deposit benefit.
@@ -242,7 +242,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
         // Interactions
         if (_pendingLep != 0) {
-            SUSHI.safeTransfer(to, _pendingLep);
+            LEP.safeTransfer(to, _pendingLep);
         }
         
         IRewarder _rewarder = rewarder[pid];
@@ -256,7 +256,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @notice Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`.
     /// @param pid The index of the pool. See `poolInfo`.
     /// @param amount LP token amount to withdraw.
-    /// @param to Receiver of the LP tokens and SUSHI rewards.
+    /// @param to Receiver of the LP tokens and LEP rewards.
     function withdrawAndHarvest(uint256 pid, uint256 amount, address to) public {
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][msg.sender];
@@ -268,7 +268,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         user.amount = user.amount.sub(amount);
         
         // Interactions
-        SUSHI.safeTransfer(to, _pendingLep);
+        LEP.safeTransfer(to, _pendingLep);
 
         IRewarder _rewarder = rewarder[pid];
         if (address(_rewarder) != address(0)) {

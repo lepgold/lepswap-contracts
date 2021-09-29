@@ -5,7 +5,7 @@ import { prepare, deploy, getBigNumber, createSLP } from "./utilities"
 
 describe("KashiGoldMaker", function () {
   before(async function () {
-    await prepare(this, ["SushiMakerKashi", "LepGold", "SushiMakerKashiExploitMock", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair", "BentoBoxV1", "KashiPairMediumRiskV1", "PeggedOracleV1"])
+    await prepare(this, ["SushiMakerKashi", "LepGold", "SushiMakerKashiExploitMock", "ERC20Mock", "UniswapV2Factory", "UniswapV2Pair", "TreasureChestV1", "KashiPairMediumRiskV1", "PeggedOracleV1"])
   })
 
   beforeEach(async function () {
@@ -21,7 +21,7 @@ describe("KashiGoldMaker", function () {
     ])
     // Deploy Sushi and Kashi contracts
     await deploy(this, [["bar", this.LepGold, [this.sushi.address]]])
-    await deploy(this, [["bento", this.BentoBoxV1, [this.weth.address]]])
+    await deploy(this, [["bento", this.TreasureChestV1, [this.weth.address]]])
     await deploy(this, [["kashiMaster", this.KashiPairMediumRiskV1, [this.bento.address]]])
     await deploy(this, [["kashiMaker", this.SushiMakerKashi, [this.factory.address, this.bar.address, this.bento.address, this.sushi.address, this.weth.address, this.factory.pairCodeHash()]]])
     await deploy(this, [["exploiter", this.SushiMakerKashiExploitMock, [this.kashiMaker.address]]])
