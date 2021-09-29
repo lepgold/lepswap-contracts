@@ -1,20 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
-// The BentoBox
-
-//  ▄▄▄▄· ▄▄▄ . ▐ ▄ ▄▄▄▄▄      ▄▄▄▄·       ▐▄• ▄
-//  ▐█ ▀█▪▀▄.▀·█▌▐█•██  ▪     ▐█ ▀█▪▪      █▌█▌▪
-//  ▐█▀▀█▄▐▀▀▪▄▐█▐▐▌ ▐█.▪ ▄█▀▄ ▐█▀▀█▄ ▄█▀▄  ·██·
-//  ██▄▪▐█▐█▄▄▌██▐█▌ ▐█▌·▐█▌.▐▌██▄▪▐█▐█▌.▐▌▪▐█·█▌
-//  ·▀▀▀▀  ▀▀▀ ▀▀ █▪ ▀▀▀  ▀█▄▀▪·▀▀▀▀  ▀█▄▀▪•▀▀ ▀▀
-
-// This contract stores funds, handles their transfers, supports flash loans and strategies.
-
-// Copyright (c) 2021 BoringCrypto - All rights reserved
-// Twitter: @Boring_Crypto
-
-// Special thanks to Keno for all his hard work and support
-
-// Version 22-Mar-2021
+// SPDX-License-Identifier:MIT
 
 pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
@@ -23,8 +7,6 @@ pragma experimental ABIEncoderV2;
 // solhint-disable not-rely-on-time
 // solhint-disable no-inline-assembly
 
-// File @boringcrypto/boring-solidity/contracts/interfaces/IERC20.sol@v1.2.0
-// License-Identifier: MIT
 
 interface IERC20 {
     function totalSupply() external view returns (uint256);
@@ -51,7 +33,7 @@ interface IERC20 {
 }
 
 // File contracts/interfaces/IFlashLoan.sol
-// License-Identifier: MIT
+
 
 interface IFlashBorrower {
     /// @notice The flashloan callback. `amount` + `fee` needs to repayed to msg.sender before this call returns.
@@ -86,7 +68,7 @@ interface IBatchFlashBorrower {
 }
 
 // File contracts/interfaces/IWETH.sol
-// License-Identifier: MIT
+
 
 interface IWETH {
     function deposit() external payable;
@@ -95,7 +77,7 @@ interface IWETH {
 }
 
 // File contracts/interfaces/IStrategy.sol
-// License-Identifier: MIT
+
 
 interface IStrategy {
     /// @notice Send the assets to the Strategy and call skim to invest them.
@@ -122,7 +104,7 @@ interface IStrategy {
 }
 
 // File @boringcrypto/boring-solidity/contracts/libraries/BoringERC20.sol@v1.2.0
-// License-Identifier: MIT
+
 
 library BoringERC20 {
     bytes4 private constant SIG_SYMBOL = 0x95d89b41; // symbol()
@@ -163,7 +145,7 @@ library BoringERC20 {
 }
 
 // File @boringcrypto/boring-solidity/contracts/libraries/BoringMath.sol@v1.2.0
-// License-Identifier: MIT
+
 
 /// @notice A library for performing overflow-/underflow-safe math,
 /// updated with awesomeness from of DappHub (https://github.com/dapphub/ds-math).
@@ -230,7 +212,7 @@ library BoringMath32 {
 }
 
 // File @boringcrypto/boring-solidity/contracts/libraries/BoringRebase.sol@v1.2.0
-// License-Identifier: MIT
+
 
 struct Rebase {
     uint128 elastic;
@@ -338,7 +320,7 @@ library RebaseLibrary {
 }
 
 // File @boringcrypto/boring-solidity/contracts/BoringOwnable.sol@v1.2.0
-// License-Identifier: MIT
+
 
 // Source: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol + Claimable.sol
 // Edited by BoringCrypto
@@ -402,7 +384,7 @@ contract BoringOwnable is BoringOwnableData {
 }
 
 // File @boringcrypto/boring-solidity/contracts/interfaces/IMasterContract.sol@v1.2.0
-// License-Identifier: MIT
+
 
 interface IMasterContract {
     /// @notice Init function that gets called from `BoringFactory.deploy`.
@@ -413,7 +395,7 @@ interface IMasterContract {
 }
 
 // File @boringcrypto/boring-solidity/contracts/BoringFactory.sol@v1.2.0
-// License-Identifier: MIT
+
 
 contract BoringFactory {
     event LogDeploy(address indexed masterContract, bytes data, address indexed cloneAddress);
@@ -500,7 +482,7 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
     }
 
     function _calculateDomainSeparator(uint256 chainId) private view returns (bytes32) {
-        return keccak256(abi.encode(DOMAIN_SEPARATOR_SIGNATURE_HASH, keccak256("BentoBox V1"), chainId, address(this)));
+        return keccak256(abi.encode(DOMAIN_SEPARATOR_SIGNATURE_HASH, keccak256("TreasureChest V1"), chainId, address(this)));
     }
 
     // solhint-disable-next-line func-name-mixedcase
@@ -512,7 +494,7 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
         return chainId == DOMAIN_SEPARATOR_CHAIN_ID ? _DOMAIN_SEPARATOR : _calculateDomainSeparator(chainId);
     }
 
-    /// @notice Other contracts need to register with this master contract so that users can approve them for the BentoBox.
+    /// @notice Other contracts need to register with this master contract so that users can approve them for the TreasureChest.
     function registerProtocol() public {
         masterContractOf[msg.sender] = msg.sender;
         emit LogRegisterProtocol(msg.sender);
@@ -575,8 +557,8 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
                             abi.encode(
                                 APPROVAL_SIGNATURE_HASH,
                                 approved
-                                    ? keccak256("Give FULL access to funds in (and approved to) BentoBox?")
-                                    : keccak256("Revoke access to BentoBox?"),
+                                    ? keccak256("Give FULL access to funds in (and approved to) TreasureChest?")
+                                    : keccak256("Revoke access to TreasureChest?"),
                                 user,
                                 masterContract,
                                 approved,
@@ -596,7 +578,7 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
 }
 
 // File @boringcrypto/boring-solidity/contracts/BoringBatchable.sol@v1.2.0
-// License-Identifier: MIT
+
 
 contract BaseBoringBatchable {
     /// @dev Helper function to extract a useful revert message from a failed call.
@@ -652,16 +634,16 @@ contract BoringBatchable is BaseBoringBatchable {
     }
 }
 
-// File contracts/BentoBox.sol
+// File contracts/TreasureChest.sol
 // License-Identifier: UNLICENSED
 
-/// @title BentoBox
+/// @title TreasureChest
 /// @author BoringCrypto, Keno
-/// @notice The BentoBox is a vault for tokens. The stored tokens can be flash loaned and used in strategies.
+/// @notice The TreasureChest is a vault for tokens. The stored tokens can be flash loaned and used in strategies.
 /// Yield from this will go to the token depositors.
 /// Rebasing tokens ARE NOT supported and WILL cause loss of funds.
-/// Any funds transfered directly onto the BentoBox will be lost, use the deposit function instead.
-contract BentoBoxV1 is MasterContractManager, BoringBatchable {
+/// Any funds transfered directly onto the TreasureChest will be lost, use the deposit function instead.
+contract TreasureChestV1 is MasterContractManager, BoringBatchable {
     using BoringMath for uint256;
     using BoringMath128 for uint128;
     using BoringERC20 for IERC20;
@@ -692,7 +674,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
     struct StrategyData {
         uint64 strategyStartDate;
         uint64 targetPercentage;
-        uint128 balance; // the balance of the strategy that BentoBox thinks is in there
+        uint128 balance; // the balance of the strategy that TreasureChest thinks is in there
     }
 
     // ******************************** //
@@ -738,7 +720,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
 
     /// Modifier to check if the msg.sender is allowed to use funds belonging to the 'from' address.
     /// If 'from' is msg.sender, it's allowed.
-    /// If 'from' is the BentoBox itself, it's allowed. Any ETH, token balances (above the known balances) or BentoBox balances
+    /// If 'from' is the TreasureChest itself, it's allowed. Any ETH, token balances (above the known balances) or TreasureChest balances
     /// can be taken by anyone.
     /// This is to enable skimming, not just for deposits, but also for withdrawals or transfers, enabling better composability.
     /// If 'from' is a clone of a masterContract AND the 'from' address has approved that masterContract, it's allowed.
@@ -746,8 +728,8 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         if (from != msg.sender && from != address(this)) {
             // From is sender or you are skimming
             address masterContract = masterContractOf[msg.sender];
-            require(masterContract != address(0), "BentoBox: no masterContract");
-            require(masterContractApproved[masterContract][from], "BentoBox: Transfer not approved");
+            require(masterContract != address(0), "TreasureChest: no masterContract");
+            require(masterContractApproved[masterContract][from], "TreasureChest: Transfer not approved");
         }
         _;
     }
@@ -808,14 +790,14 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         uint256 share
     ) public payable allowed(from) returns (uint256 amountOut, uint256 shareOut) {
         // Checks
-        require(to != address(0), "BentoBox: to not set"); // To avoid a bad UI from burning funds
+        require(to != address(0), "TreasureChest: to not set"); // To avoid a bad UI from burning funds
 
         // Effects
         IERC20 token = token_ == USE_ETHEREUM ? wethToken : token_;
         Rebase memory total = totals[token];
 
         // If a new token gets added, the tokenSupply call checks that this is a deployed contract. Needed for security.
-        require(total.elastic != 0 || token.totalSupply() > 0, "BentoBox: No tokens");
+        require(total.elastic != 0 || token.totalSupply() > 0, "TreasureChest: No tokens");
         if (share == 0) {
             // value of the share may be lower than the amount due to rounding, that's ok
             share = total.toBase(amount, false);
@@ -833,7 +815,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         // During flashloans the _tokenBalanceOf is lower than 'reality', so skimming deposits will mostly fail during a flashloan.
         require(
             from != address(this) || token_ == USE_ETHEREUM || amount <= _tokenBalanceOf(token).sub(total.elastic),
-            "BentoBox: Skim too much"
+            "TreasureChest: Skim too much"
         );
 
         balanceOf[token][to] = balanceOf[token][to].add(share);
@@ -871,7 +853,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         uint256 share
     ) public allowed(from) returns (uint256 amountOut, uint256 shareOut) {
         // Checks
-        require(to != address(0), "BentoBox: to not set"); // To avoid a bad UI from burning funds
+        require(to != address(0), "TreasureChest: to not set"); // To avoid a bad UI from burning funds
 
         // Effects
         IERC20 token = token_ == USE_ETHEREUM ? wethToken : token_;
@@ -888,7 +870,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         total.elastic = total.elastic.sub(amount.to128());
         total.base = total.base.sub(share.to128());
         // There have to be at least 1000 shares left to prevent reseting the share/amount ratio (unless it's fully emptied)
-        require(total.base >= MINIMUM_SHARE_BALANCE || total.base == 0, "BentoBox: cannot empty");
+        require(total.base >= MINIMUM_SHARE_BALANCE || total.base == 0, "TreasureChest: cannot empty");
         totals[token] = total;
 
         // Interactions
@@ -897,7 +879,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
             IWETH(address(wethToken)).withdraw(amount);
             // X2, X3: A revert or big gas usage could block, however, the to address is under control of the caller.
             (bool success, ) = to.call{value: amount}("");
-            require(success, "BentoBox: ETH transfer failed");
+            require(success, "TreasureChest: ETH transfer failed");
         } else {
             // X2, X3: A malicious token could block withdrawal of just THAT token.
             //         masterContracts may want to take care not to rely on withdraw always succeeding.
@@ -923,7 +905,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         uint256 share
     ) public allowed(from) {
         // Checks
-        require(to != address(0), "BentoBox: to not set"); // To avoid a bad UI from burning funds
+        require(to != address(0), "TreasureChest: to not set"); // To avoid a bad UI from burning funds
 
         // Effects
         balanceOf[token][from] = balanceOf[token][from].sub(share);
@@ -946,7 +928,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         uint256[] calldata shares
     ) public allowed(from) {
         // Checks
-        require(tos[0] != address(0), "BentoBox: to[0] not set"); // To avoid a bad UI from burning funds
+        require(tos[0] != address(0), "TreasureChest: to[0] not set"); // To avoid a bad UI from burning funds
 
         // Effects
         uint256 totalAmount;
@@ -982,7 +964,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
 
         borrower.onFlashLoan(msg.sender, token, amount, fee, data);
 
-        require(_tokenBalanceOf(token) >= totals[token].addElastic(fee.to128()), "BentoBox: Wrong amount");
+        require(_tokenBalanceOf(token) >= totals[token].addElastic(fee.to128()), "TreasureChest: Wrong amount");
         emit LogFlashLoan(address(borrower), token, amount, fee, receiver);
     }
 
@@ -1017,7 +999,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
 
         for (uint256 i = 0; i < len; i++) {
             IERC20 token = tokens[i];
-            require(_tokenBalanceOf(token) >= totals[token].addElastic(fees[i].to128()), "BentoBox: Wrong amount");
+            require(_tokenBalanceOf(token) >= totals[token].addElastic(fees[i].to128()), "TreasureChest: Wrong amount");
             emit LogFlashLoan(address(borrower), token, amounts[i], fees[i], receivers[i]);
         }
     }
@@ -1088,7 +1070,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
     /// @param maxChangeAmount The maximum amount for either pulling or pushing from/to the `IStrategy` contract.
     // F5 - Checks-Effects-Interactions pattern followed? (SWC-107)
     // F5: Total amount is updated AFTER interaction. But strategy is under our control.
-    // F5: Not followed to prevent reentrancy issues with flashloans and BentoBox skims?
+    // F5: Not followed to prevent reentrancy issues with flashloans and TreasureChest skims?
     function harvest(
         IERC20 token,
         bool balance,
@@ -1111,7 +1093,7 @@ contract BentoBoxV1 is MasterContractManager, BoringBatchable {
         } else if (balanceChange < 0) {
             // C1 - All math done through BoringMath (SWC-101)
             // C1: balanceChange could overflow if it's max negative int128.
-            // But tokens with balances that large are not supported by the BentoBox.
+            // But tokens with balances that large are not supported by the TreasureChest.
             uint256 sub = uint256(-balanceChange);
             totalElastic = totalElastic.sub(sub);
             totals[token].elastic = totalElastic.to128();

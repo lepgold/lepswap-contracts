@@ -295,21 +295,21 @@ rule solvency(uint256 pid, address u, address lptoken, method f) {
 	assert userAmount_ != _userAmount => (userAmount_ - _userAmount == balance_ - _balance);
 }
 
-rule sushiGivenInHarvestEqualsPendingSushi(uint256 pid, address user, address to) {
+rule sushiGivenInHarvestEqualsPendingLep(uint256 pid, address user, address to) {
 	env e;
 
 	require to == user && user != currentContract && e.msg.sender == user;
 	require LepToken == SUSHI();
 
 	uint256 userSushiBalance = LepToken.balanceOf(e, user);
-	uint256 userPendingSushi = pendingSushi(e, pid, user);
+	uint256 userPendingLep = pendingSushi(e, pid, user);
 
 	// Does success return value matters? Check with Nurit
 	harvest(e, pid, to);
 
 	uint256 userSushiBalance_ = LepToken.balanceOf(e, user);
 
-	assert(userSushiBalance_ == (userSushiBalance + userPendingSushi),
+	assert(userSushiBalance_ == (userSushiBalance + userPendingLep),
 		   "pending sushi not equal to the sushi given in harvest");
 }
 

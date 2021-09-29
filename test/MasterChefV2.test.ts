@@ -67,8 +67,8 @@ describe("MasterLepV2", function () {
     })
   })
 
-  describe("PendingSushi", function () {
-    it("PendingSushi should equal ExpectedSushi", async function () {
+  describe("PendingLep", function () {
+    it("PendingLep should equal ExpectedSushi", async function () {
       await this.chef2.add(10, this.rlp.address, this.rewarder.address)
       await this.rlp.approve(this.chef2.address, getBigNumber(10))
       let log = await this.chef2.deposit(0, getBigNumber(1), this.alice.address)
